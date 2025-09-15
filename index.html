@@ -3,132 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>one8chirag</title>
+  <title>Plyr HLS Player</title>
 
   <!-- Plyr CSS -->
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
 
   <style>
     body {
       margin: 0;
-      background: #000;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
-      flex-direction: column;
+      background: #000;
     }
-
+    .plyr__video-embed,
     video {
-      width: 80%;
-      max-width: 800px;
-      height: auto;
-      border-radius: 10px;
-    }
-
-    /* Premium Popup Styles */
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+      max-width: 100%;
+      aspect-ratio: 16 / 9; /* keeps player 16:9 */
     }
+/* Premium Popup Styles */
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 
-    .popup-content {
-      background: #111;
-      color: #fff;
-      padding: 30px 35px;
-      border-radius: 20px;
-      text-align: center;
-      width: 85%;
-      max-width: 450px;
-      border: 5px solid gold;
-      box-shadow: 0 0 25px gold, 0 0 50px rgba(255, 215, 0, 0.3);
-      animation: popupFade 0.5s ease-in-out;
-    }
+.popup-content {
+  background: #111; /* Darker, premium background */
+  color: #fff;
+  padding: 30px 35px;
+  border-radius: 20px;
+  text-align: center;
+  width: 85%;
+  max-width: 450px;
+  border: 5px solid gold; /* Strong golden outline */
+  box-shadow: 0 0 25px gold, 0 0 50px rgba(255, 215, 0, 0.3);
+  animation: popupFade 0.5s ease-in-out;
+}
 
-    @keyframes popupFade {
-      0% { transform: scale(0.7); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+@keyframes popupFade {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
 
-    .popup-content h2 {
-      margin: 0 0 12px;
-      font-size: 24px;
-      color: #ffd700;
-      font-weight: bold;
-      text-shadow: 0 0 8px gold;
-    }
+.popup-content h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  color: #ffd700; /* Golden Title */
+  font-weight: bold;
+  text-shadow: 0 0 8px gold;
+}
 
-    .popup-content p {
-      font-size: 16px;
-      margin: 10px 0 20px;
-      line-height: 1.4;
-    }
+.popup-content p {
+  font-size: 16px;
+  margin: 10px 0 20px;
+  line-height: 1.4;
+}
 
-    .popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+.popup-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-    .popup-buttons button {
-      padding: 12px 0;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
+.popup-buttons button {
+  padding: 12px 0;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
 
-    .join-btn {
-      background: linear-gradient(90deg, #ffd700, #ffec70);
-      color: black;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 0 10px gold;
-    }
+.join-btn {
+  background: linear-gradient(90deg, #ffd700, #ffec70);
+  color: black;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 0 10px gold;
+}
 
-    .join-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px gold;
-    }
+.join-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px gold;
+}
 
-    .already-btn {
-      background: #333;
-      color: white;
-      border-radius: 8px;
-      border: 1px solid #555;
-    }
+.already-btn {
+  background: #333;
+  color: white;
+  border-radius: 8px;
+  border: 1px solid #555;
+}
 
-    .already-btn:hover {
-      background: #444;
-    }
+.already-btn:hover {
+  background: #444;
+}
 
-    .telegram-link {
-      color: #ffd700;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
+.telegram-link {
+  color: #ffd700;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
 
-  <!-- Video Player -->
-  <video id="player" controls crossorigin playsinline></video>
+  <video id="player" controls playsinline></video>
 
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
   <!-- Premium Popup -->
   <div class="popup" id="customPopup">
     <div class="popup-content">
       <h2>Support Us!</h2>
-      <p>Join our Telegram channel <a href="https://t.me/one8ch1raggg" class="telegram-link">@one8chirag</a> for exclusive updates and premium content.</p>
+      <p>
+        Join our Telegram channel 
+        <a href="https://t.me/one8ch1raggg" class="telegram-link">@one8chirag</a> 
+        for exclusive updates and premium content.
+      </p>
       <div class="popup-buttons">
         <button class="join-btn" onclick="window.location.href='https://t.me/one8ch1raggg'">Join Now</button>
         <button class="already-btn" onclick="closePopup()">Already Joined</button>
@@ -136,49 +139,40 @@
     </div>
   </div>
 
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <!-- Plyr JS -->
-  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
   <script>
-    // Show popup after 2 seconds
-    function showPopup() {
-      document.getElementById('customPopup').style.display = 'flex';
-    }
-
-    function closePopup() {
-      document.getElementById('customPopup').style.display = 'none';
-    }
-
-    setTimeout(showPopup, 2000);
-
-    // Live stream setup
     const streamURL = "https://media.onestream.studio/content/hls/live/live_4139402_6zjrbyf6x/hls.m3u8";
-    const video = document.getElementById('player');
+    const video = document.getElementById("player");
 
     if (Hls.isSupported()) {
       const hls = new Hls({
-        xhrSetup: function (xhr, url) {
+        xhrSetup: function (xhr) {
           xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
           xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
           xhr.setRequestHeader("vKey", "live_4139402_6zjrbyf6x?auth=p_auth_4139402_754stsirp");
           xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
         }
       });
-
       hls.loadSource(streamURL);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play();
+        video.play().catch(() => {});
       });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = streamURL;
-      video.addEventListener('loadedmetadata', () => video.play());
+      video.play().catch(() => {});
     }
 
+    // Initialize Plyr
     const player = new Plyr(video);
-  </script>
+// Show popup after 2 seconds
+setTimeout(() => {
+  document.getElementById("customPopup").style.display = "flex";
+}, 2000);
 
+function closePopup() {
+  document.getElementById("customPopup").style.display = "none";
+}
+  </script>
 </body>
 </html>
